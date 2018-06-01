@@ -1,0 +1,20 @@
+{
+  "apps" : [{
+    "name": "hackx-server",
+    "script": "dist/main.js",
+    "watch": false,
+    "env": {
+      "NODE_ENV": "develop"
+    },
+    "env_production" : {
+       "NODE_ENV": "production"
+    },
+    "env_test": {
+      "NODE_ENV": "test"
+    },
+    "env_deploy" : {
+       "NODE_ENV": "deploy"
+    },
+    "log_file": "./output.log"
+  }]
+}
