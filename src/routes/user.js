@@ -4,7 +4,7 @@ import User from 'models/user';
 import exception from 'class/exception';
 
 import { calculateToken } from 'server/user';
-import { request, summary, body, tags, middlewares } from 'koa-swagger-decorator';
+import { request, summary, body, tags } from 'koa-swagger-decorator';
 
 const tag = tags(['User']);
 const userSchema = {
@@ -12,25 +12,15 @@ const userSchema = {
   password: { type: 'string', required: true },
 };
 
-const logTime = () => async (ctx, next) => {
-  console.log(`start: ${new Date()}`);
-  await next();
-  console.log(`end: ${new Date()}`);
-};
-
-
 export default class UserRouter {
   @request('POST', '/user/register')
   @summary('注册用户')
   @tag
-  @middlewares([logTime()])
-  @body(Object.assign(userSchema, {
-    keyword: { type: 'string', required: true }
-  }))
+  @body(userSchema)
   static async register(ctx) {
     const { name, password, keyword } = ctx.validatedBody;
     let user = await User.findOne({ name });
-    if (user) throw new exception.ForbiddenError('the name is exsit');
+    if (user) throw new exception.ForbiddenError('name exsited');
 
     user = await User.create({
       name,
