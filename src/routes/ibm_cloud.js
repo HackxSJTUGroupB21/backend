@@ -7,6 +7,7 @@ import path from 'path';
 import config from 'config';
 const tag = tags(['IBM CLOUD']);
 
+const remote_host = 'http://202.120.1.152:3003/api';
 
 export default class IBMRouter {
   @request('GET', '/speechToText')
@@ -25,7 +26,7 @@ export default class IBMRouter {
   @query({ text: { type: 'string', description: '文本字符' } })
   static async analy(ctx) {
     const { text } = ctx.query;
-    const r = await rp(`http://localhost:5000/api/tone?input_str=${text}`, { json: true });
+    const r = await rp(`${remote_host}/tone?input_str=${text}`, { json: true });
     const result = r.result;
     ctx.body = { result };
   }
@@ -43,7 +44,7 @@ export default class IBMRouter {
     const sample_dir = path.resolve(`avatar/${ctx.user._id}`);
     const result_dir = `../generated/${ctx.user._id}`;
     if (!mock) {
-      await rp(`http://localhost:5000/api/face_generation?sample_dir=${sample_dir}&&result_dir=${result_dir}`);
+      await rp(`${remote_host}/face_generation?sample_dir=${sample_dir}&&result_dir=${result_dir}`);
     }
     const userId = ctx.user._id;
     await User.findOneAndUpdate(
