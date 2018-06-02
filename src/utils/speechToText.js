@@ -28,6 +28,12 @@ export async function speech_to_text(audio_name) {
         if (error) {
           reject(error);
         } else {
+          if (!transcript.results
+            || transcript.results.length === 0
+            || !transcript.results[0].alternatives
+            || transcript.results[0].alternatives.length === 0) {
+            return resolve('');
+          }
           const first_result = transcript.results[0].alternatives[0];
           const ret = first_result.transcript;
           resolve(ret);
