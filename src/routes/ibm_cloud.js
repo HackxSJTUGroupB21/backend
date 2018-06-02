@@ -2,7 +2,8 @@
 import { request, summary, tags, query } from 'koa-swagger-decorator';
 import { speech_to_text } from '../utils/speechToText';
 import rp from 'request-promise';
-
+import User from 'models/user';
+import config from 'config';
 const tag = tags(['IBM CLOUD']);
 
 
@@ -26,14 +27,24 @@ export default class IBMRouter {
   }
 
   @request('POST', '/generateAvatars')
-  @summary('生成各种表情的头像')
+  @summary('上传头像, 生成各种表情的头像')
   @tag
   @query({ avatarName: { type: 'string', description: '头像文件名' } })
   static async generate(ctx) {
-    const classes = ['angry', 'contemptuous', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised'];
+    const { avatarName } = ctx.query;
+    const avatarUrl = `${config.baseUrl}/avatar/${avatarName}`;
+    const userId = ctx.user._id;
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { avatarUrl } },
+      {
+        upsert: true,
+        new: true,
+      });
+    const classes = ['origin', 'angry', 'contemptuous', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised'];
     const result = {};
-    classes.forEach(c => {
-      result[c] = 'example img url';
+    classes.forEach((c, idx) => {
+      result[c] = `config.baseUr/generated/${ctx.user._id}/${idx + 1}-images.jpg`;
     });
     ctx.body = { result };
   }
@@ -42,10 +53,12 @@ export default class IBMRouter {
   @summary('获取各种表情的头像')
   @tag
   static async getAvata(ctx) {
-    const classes = ['angry', 'contemptuous', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised'];
+    const classes = ['origin', 'angry', 'contemptuous', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised'];
+    const user = await User.findById(ctx.user._id);
+    if (!user.avatarUrl) throw new Error('还未上传头像');
     const result = {};
-    classes.forEach(c => {
-      result[c] = 'example img url';
+    classes.forEach((c, idx) => {
+      result[c] = `${config.baseUrl}/generated/${ctx.user._id}/${idx + 1}-images.jpg`;
     });
     ctx.body = { result };
   }

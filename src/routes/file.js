@@ -2,7 +2,6 @@ import multer from 'koa-multer';
 import _path from 'path';
 import Doc from 'koa-swagger-decorator';
 import config from '../config';
-import User from 'models/user';
 
 const {
   request,
@@ -11,7 +10,6 @@ const {
   formData,
   middlewares,
   responses,
-  query
 } = Doc;
 
 
@@ -87,40 +85,6 @@ export default class FileRouter {
     file.url = getFileUrl(file.filename, 'avatar');
     ctx.body = {
       result: file
-    };
-  }
-
-  @request('post', '/avatar')
-  @summary('上传头像')
-  @tag
-  @query({
-    avatarUrl: {
-      type: 'string',
-      description: '头像图片url'
-    }
-  })
-  @responses({
-    200: {
-      description: 'file upload success'
-    },
-    500: {
-      description: 'something wrong about server'
-    }
-  })
-  static async updateAvatar(ctx) {
-    const {
-      avatarUrl
-    } = ctx.query;
-    const userId = ctx.user._id;
-    const result = await User.findOneAndUpdate(
-      { _id: userId },
-      { $set: { avatarUrl } },
-      {
-        upsert: true,
-        new: true,
-      });
-    ctx.body = {
-      result
     };
   }
 }
