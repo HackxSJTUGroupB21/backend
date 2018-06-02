@@ -16,8 +16,10 @@ npm run start
 // Flask开发测试
 cd face_gen
 python server.py
+```
 
 ## 项目结构
+
 ```
 - src                    # 源代码目录
  |- class                # class
