@@ -7,7 +7,7 @@ import path from 'path';
 import config from 'config';
 const tag = tags(['IBM CLOUD']);
 
-const remote_host = 'http://202.120.1.152:3003/flask_api';
+const remote_host = 'http://localhost:5000/api';
 
 export default class IBMRouter {
   @request('GET', '/speechToText')
