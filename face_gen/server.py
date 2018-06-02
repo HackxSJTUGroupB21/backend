@@ -72,7 +72,7 @@ config.model_save_step = 10000
 config.lr_update_step = 1000
 config.celeba_image_dir = None
 config.attr_path = None
-config.celeba_crop_size = 178
+config.celeba_crop_size = 256
 config.image_size = 256
 
 config.g_conv_dim = 64
