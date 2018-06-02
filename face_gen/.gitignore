@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.ckpt
+.DS_Store
+stargan_both/result/*.jpg
+stargan_both/samples//*.jpg

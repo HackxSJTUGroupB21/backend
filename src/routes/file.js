@@ -2,7 +2,9 @@ import multer from 'koa-multer';
 import _path from 'path';
 import Doc from 'koa-swagger-decorator';
 import config from '../config';
-
+import url from 'url';
+import qs from 'querystring';
+import mkdirp from 'mkdirp';
 const {
   request,
   summary,
@@ -10,11 +12,12 @@ const {
   formData,
   middlewares,
   responses,
+  query,
 } = Doc;
 
 
-function getFileUrl(filename, type) {
-  return type ? `${config.baseUrl}/avatar/${filename}` : `${config.baseUrl}/temp/${filename}`;
+function getFileUrl(filename, userId) {
+  return userId ? `${config.baseUrl}/avatar/${userId}/${filename}` : `${config.baseUrl}/temp/${filename}`;
 }
 const tag = tags(['File']);
 
@@ -24,8 +27,13 @@ const storage = multer.diskStorage({
 });
 
 const face_storage = multer.diskStorage({
-  destination: _path.resolve('avatar/'),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+  destination: (req, file, cb) => {
+    const q = qs.parse(url.parse(req.url).query);
+    const dir = _path.resolve(`avatar/${q.userId}`);
+    mkdirp.sync(dir);
+    return cb(null, dir);
+  },
+  filename: (req, file, cb) => cb(null, 'avatar.jpg')
 });
 
 const upload = multer({
@@ -63,6 +71,7 @@ export default class FileRouter {
   @request('post', '/avatarFile')
   @summary('上传头像接口')
   @tag
+  @query({ userId: { type: 'string' } })
   @formData({
     file: {
       type: 'file',
@@ -82,7 +91,7 @@ export default class FileRouter {
     const {
       file
     } = ctx.req;
-    file.url = getFileUrl(file.filename, 'avatar');
+    file.url = getFileUrl(file.filename, ctx.user.userId);
     ctx.body = {
       result: file
     };

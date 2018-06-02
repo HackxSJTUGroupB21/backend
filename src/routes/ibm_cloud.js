@@ -3,6 +3,7 @@ import { request, summary, tags, query } from 'koa-swagger-decorator';
 import { speech_to_text } from '../utils/speechToText';
 import rp from 'request-promise';
 import User from 'models/user';
+import path from 'path';
 import config from 'config';
 const tag = tags(['IBM CLOUD']);
 
@@ -23,7 +24,10 @@ export default class IBMRouter {
   @tag
   @query({ text: { type: 'string', description: '文本字符' } })
   static async analy(ctx) {
-    ctx.body = { result: 'sad' };
+    const { text } = ctx.query;
+    const r = await rp(`http://localhost:5000/api/tone?input_str=${text}`, { json: true });
+    const result = r.result;
+    ctx.body = { result };
   }
 
   @request('POST', '/generateAvatars')
@@ -35,10 +39,11 @@ export default class IBMRouter {
   })
   static async generate(ctx) {
     const { avatarName, mock } = ctx.query;
-    const avatarUrl = `${config.baseUrl}/avatar/${avatarName}`;
+    const avatarUrl = `${config.baseUrl}/avatar/${ctx.user._id}/${avatarName}`;
+    const sample_dir = path.resolve(`avatar/${ctx.user._id}`);
     const result_dir = `../generated/${ctx.user._id}`;
     if (!mock) {
-      await rp(`http://localhost:5000/api/test?sample_dir=stargan_both/samples&&result_dir=${result_dir}`);
+      await rp(`http://localhost:5000/api/face_generation?sample_dir=${sample_dir}&&result_dir=${result_dir}`);
     }
     const userId = ctx.user._id;
     await User.findOneAndUpdate(
