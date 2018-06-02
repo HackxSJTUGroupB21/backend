@@ -14,7 +14,7 @@ export async function speech_to_text(audio_name) {
       audio: fs.createReadStream(audio),
       model: 'en-US_BroadbandModel', // for English version
     // model: 'zh-CN_BroadbandModel',	 // for Chinese version
-      content_type: 'audio/mp3',
+      content_type: 'audio/webm',
       max_alternatives: 3,
       word_confidence: false,
       timestamps: false,
