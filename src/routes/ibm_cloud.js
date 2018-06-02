@@ -22,7 +22,7 @@ export default class IBMRouter {
   @summary('分析文本情绪')
   @tag
   @query({ text: { type: 'string', description: '文本字符' } })
-  static async speech(ctx) {
+  static async analy(ctx) {
     ctx.body = { result: 'sad' };
   }
 
