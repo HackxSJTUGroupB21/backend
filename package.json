@@ -36,6 +36,7 @@
     "koa-cors": "^0.0.16",
     "koa-multer": "^1.0.2",
     "koa-router": "^7.2.1",
+    "koa-static": "^4.0.3",
     "koa-swagger-decorator": "^1.4.0",
     "lodash": "^4.17.4",
     "loglevel": "^1.4.0",
@@ -47,7 +48,8 @@
     "request": "^2.81.0",
     "request-promise": "^4.2.0",
     "sha1": "^1.1.1",
-    "supertest": "^2.0.1"
+    "supertest": "^2.0.1",
+    "watson-developer-cloud": "^3.4.4"
   },
   "license": "MIT"
 }

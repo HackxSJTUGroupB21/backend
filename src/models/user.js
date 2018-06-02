@@ -6,7 +6,7 @@ const UserSchema = new Schema({
   passwordHash: String,
   token: String,
   type: String, // 用户类型
-  avatar: String, // 头像地址
+  avatarUrl: String, // 头像地址
 });
 
 const User = mongoose.model('user', UserSchema);
