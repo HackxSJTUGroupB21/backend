@@ -29,10 +29,17 @@ export default class IBMRouter {
   @request('POST', '/generateAvatars')
   @summary('上传头像, 生成各种表情的头像')
   @tag
-  @query({ avatarName: { type: 'string', description: '头像文件名' } })
+  @query({
+    avatarName: { type: 'string', description: '头像文件名' },
+    mock: { type: 'boolean', default: true }
+  })
   static async generate(ctx) {
-    const { avatarName } = ctx.query;
+    const { avatarName, mock } = ctx.query;
     const avatarUrl = `${config.baseUrl}/avatar/${avatarName}`;
+    const result_dir = `../generated/${ctx.user._id}`;
+    if (!mock) {
+      await rp(`http://localhost:5000/api/test?sample_dir=stargan_both/samples&&result_dir=${result_dir}`);
+    }
     const userId = ctx.user._id;
     await User.findOneAndUpdate(
       { _id: userId },
@@ -44,7 +51,7 @@ export default class IBMRouter {
     const classes = ['origin', 'angry', 'contemptuous', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised'];
     const result = {};
     classes.forEach((c, idx) => {
-      result[c] = `config.baseUr/generated/${ctx.user._id}/${idx + 1}-images.jpg`;
+      result[c] = `${config.baseUrl}/generated/${ctx.user._id}/${idx + 1}-images.jpg`;
     });
     ctx.body = { result };
   }
